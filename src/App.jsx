@@ -356,11 +356,7 @@ export default function App() {
       <aside className="side">
         <div className="side-inner">
           <a className="wordmark" href="#about">{profile.name}</a>
-          {view === "home" ? (
-            <PixelPortrait src={photo} alt={`Portrait of ${profile.name}`} />
-          ) : (
-            <div className="side-rule" aria-hidden="true"><span className="scanline-handle" /></div>
-          )}
+          {view === "home" && <PixelPortrait src={photo} alt={`Portrait of ${profile.name}`} />}
           <nav className="nav" aria-label="Sections">
             {nav.map((n) => (
               <a key={n.id} href={`#${n.id}`} className={active === n.id ? "is-active" : ""} aria-current={active === n.id ? "page" : undefined}>

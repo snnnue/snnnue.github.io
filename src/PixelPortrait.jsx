@@ -1,20 +1,19 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // ─────────────────────────────────────────────────────────────
-//  Portrait with a pastel pixel version revealed above a scan line.
-//  - The line rests at the top. It moves only while you click (or touch)
-//    and drag, and stays where you let go. Arrow keys move it too.
-//  - Above the line, the photo becomes pastel cubes. Cubes twinkle,
-//    and "neuron" cubes (pink) fire and pass signals to each other,
-//    one cube at a time, like spikes travelling between cells.
-//  - A click (or tap) without dragging starts a burst of signals there.
+//  Portrait hidden under a pastel pixel version of itself.
+//  - By default the pixels cover the whole photo.
+//  - Move the mouse over it (or drag a finger) and the cubes along
+//    your path shrink away, uncovering the photo underneath.
+//  - The small square under the photo ("cover me") puts the pixels back.
+//  - Cubes still twinkle, and pink "neuron" cubes fire and pass signals.
+//  - A click without moving starts a burst of signals there.
 // ─────────────────────────────────────────────────────────────
 
 const COLS = 24; // number of cubes across. Bigger = smaller cubes
 const ROWS = 28;
 const FOCUS_Y = 0.15; // 0 = crop from top of photo, 1 = from bottom
 const N_NODES = 15;
-const N_EXTRA_DOTS = 8; // extra pink squares shown on the photo
 
 const PALETTE = {
   bg: ["#f6f2fd", "#efe8fb", "#e8def8", "#ded2f4", "#d4c6f1"],
@@ -116,10 +115,17 @@ function gridPath(a, b) {
   return path;
 }
 
+
+const BRUSH = 1.6; // how many cubes around the cursor get uncovered
+const HINT_CELLS = 16; // cubes that open on their own when the page loads, as a hint
+const PEEK_SHARE = 0.06; // once this share of cubes is uncovered, the Cover Me button starts to pulse
+
 export default function PixelPortrait({ src, alt }) {
   const frameRef = useRef(null);
   const canvasRef = useRef(null);
-  const lineRef = useRef(null);
+  const apiRef = useRef({});
+  const [tip, setTip] = useState(false);
+  const [peeked, setPeeked] = useState(false); // has the visitor uncovered part of the photo?
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -129,9 +135,9 @@ export default function PixelPortrait({ src, alt }) {
     const accent = hexToRgb(PALETTE.pink);
     const hot = hexToRgb(PALETTE.hot);
     const white = [255, 255, 255];
+    const N = COLS * ROWS;
 
     const nodes = pickCells(N_NODES, 5, 2026).map((p) => ({ ...p, fireT: -1e9 }));
-    const dots = [...nodes, ...pickCells(N_EXTRA_DOTS, 3, 1019)];
     nodes.forEach((n, i) => {
       n.near = nodes
         .map((m, j) => ({ j, d: Math.abs(m.c - n.c) + Math.abs(m.r - n.r) }))
@@ -143,7 +149,12 @@ export default function PixelPortrait({ src, alt }) {
 
     const st = {
       img: null, crop: null, grid: null,
-      line: 0, target: 0, dragging: false, moved: false,
+      cover: new Float32Array(N).fill(1), // 1 = cube fully there, 0 = gone
+      target: new Float32Array(N).fill(1),
+      backAt: new Float64Array(N), // when a cube should start coming back
+      hintAt: [], // cubes waiting to open for the first-load hint
+      tick: 0, peeked: false,
+      last: null, down: false, moved: false,
       twinkles: [], signals: [], nextAmbient: 0, raf: 0, alive: true,
     };
 
@@ -157,10 +168,30 @@ export default function PixelPortrait({ src, alt }) {
       st.img = img;
       st.grid = buildGrid(img, st.crop);
       resize();
+      openHint(performance.now());
       draw(performance.now());
       if (!reduce) st.raf = requestAnimationFrame(loop);
     };
     img.src = src;
+
+    // On first load, a few scattered cubes (mostly over the face) open by
+    // themselves, so visitors can tell there is a photo underneath.
+    function openHint(t) {
+      const r = rng(1019);
+      const picked = new Set();
+      let tries = 0;
+      while (picked.size < HINT_CELLS && tries < 500) {
+        tries++;
+        const c = 5 + Math.floor(r() * (COLS - 10));
+        const rr = 6 + Math.floor(r() * (ROWS - 12));
+        picked.add(rr * COLS + c);
+      }
+      let k = 0;
+      for (const i of picked) {
+        if (reduce) { st.cover[i] = 0; st.target[i] = 0; }
+        else st.hintAt.push({ i, at: t + 500 + k++ * 70 });
+      }
+    }
 
     function resize() {
       const rect = canvas.getBoundingClientRect();
@@ -171,15 +202,17 @@ export default function PixelPortrait({ src, alt }) {
     const ro = new ResizeObserver(() => { resize(); draw(performance.now()); });
     ro.observe(canvas);
 
-    // cell edges in canvas pixels (rounded so cubes never leave seams)
     const cx = (c) => Math.round((c * canvas.width) / COLS);
     const cy = (r) => Math.round((r * canvas.height) / ROWS);
-    function fillCell(c, r, color, inset = 0) {
+    // draw one cube; `k` (0..1) shrinks it toward its centre as it disappears
+    function fillCell(c, r, color, inset = 0, k = 1) {
       const x0 = cx(c), x1 = cx(c + 1), y0 = cy(r), y1 = cy(r + 1);
-      const ix = (x1 - x0) * inset, iy = (y1 - y0) * inset;
+      const w = x1 - x0, h = y1 - y0;
+      const s = (1 - k) / 2 + inset * k;
       ctx.fillStyle = color;
-      ctx.fillRect(x0 + ix, y0 + iy, x1 - x0 - 2 * ix, y1 - y0 - 2 * iy);
+      ctx.fillRect(x0 + w * s, y0 + h * s, w * (1 - 2 * s), h * (1 - 2 * s));
     }
+    const coverAt = (c, r) => st.cover[r * COLS + c];
 
     function fire(i, t, spread) {
       const n = nodes[i];
@@ -192,18 +225,54 @@ export default function PixelPortrait({ src, alt }) {
       }
     }
 
+    // uncover the cubes around a point (in cell units)
+    function erase(pc, pr) {
+      const r0 = Math.max(0, Math.floor(pr - BRUSH)), r1 = Math.min(ROWS - 1, Math.ceil(pr + BRUSH));
+      const c0 = Math.max(0, Math.floor(pc - BRUSH)), c1 = Math.min(COLS - 1, Math.ceil(pc + BRUSH));
+      for (let r = r0; r <= r1; r++) {
+        for (let c = c0; c <= c1; c++) {
+          if (Math.hypot(c + 0.5 - pc, r + 0.5 - pr) <= BRUSH) {
+            const i = r * COLS + c;
+            st.target[i] = 0;
+            st.backAt[i] = 0;
+          }
+        }
+      }
+    }
+    // erase along the path from the last point so fast moves leave no gaps
+    function eraseTo(p) {
+      const pc = p.x * COLS, pr = p.y * ROWS;
+      if (st.last) {
+        const dc = pc - st.last.c, dr = pr - st.last.r;
+        const steps = Math.max(1, Math.ceil(Math.hypot(dc, dr) / 0.4));
+        for (let s = 1; s <= steps; s++) erase(st.last.c + (dc * s) / steps, st.last.r + (dr * s) / steps);
+      } else erase(pc, pr);
+      st.last = { c: pc, r: pr };
+    }
+    // bring every cube back, in a quick ripple from the top-left
+    function coverAll() {
+      const t = performance.now();
+      st.hintAt = [];
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const i = r * COLS + c;
+          if (st.target[i] === 1 && st.cover[i] > 0.99) continue;
+          st.backAt[i] = t + (r + c) * 14 + Math.random() * 60;
+        }
+      }
+      if (reduce) { st.target.fill(1); st.cover.fill(1); draw(t); }
+    }
+    apiRef.current.coverAll = coverAll;
+
     function update(t) {
-      // ambient activity
       if (t > st.nextAmbient) {
         fire(Math.floor(Math.random() * nodes.length), t, 2);
         st.nextAmbient = t + 1300 + Math.random() * 1400;
       }
-      // twinkles
       if (Math.random() < 0.09) {
         st.twinkles.push({ c: Math.floor(Math.random() * COLS), r: Math.floor(Math.random() * ROWS), t0: t, dur: 500 + Math.random() * 600 });
       }
       st.twinkles = st.twinkles.filter((w) => t - w.t0 < w.dur);
-      // signals arriving
       st.signals = st.signals.filter((s) => {
         const step = (t - s.t0) / 55;
         if (step >= s.path.length - 1) {
@@ -212,85 +281,83 @@ export default function PixelPortrait({ src, alt }) {
         }
         return true;
       });
-      // line easing
-      const target = st.target;
-      st.line += (target - st.line) * (reduce ? 1 : 0.35);
-      if (Math.abs(target - st.line) < 0.0005) st.line = target;
+      if (st.hintAt.length) {
+        st.hintAt = st.hintAt.filter((h) => {
+          if (t < h.at) return true;
+          st.target[h.i] = 0;
+          return false;
+        });
+      }
+      // tell the button when the visitor has uncovered a fair bit of the photo
+      if (++st.tick % 12 === 0) {
+        let open = 0;
+        for (let i = 0; i < N; i++) if (st.target[i] === 0) open++;
+        const peekedNow = open > N * PEEK_SHARE;
+        if (peekedNow !== st.peeked) { st.peeked = peekedNow; setPeeked(peekedNow); }
+      }
+      for (let i = 0; i < N; i++) {
+        if (st.backAt[i] && t >= st.backAt[i]) { st.target[i] = 1; st.backAt[i] = 0; }
+        const d = st.target[i] - st.cover[i];
+        if (d !== 0) {
+          st.cover[i] += d * (d < 0 ? 0.28 : 0.22);
+          if (Math.abs(st.target[i] - st.cover[i]) < 0.01) st.cover[i] = st.target[i];
+        }
+      }
     }
 
     function draw(t) {
       if (!st.img) return;
       const W = canvas.width, H = canvas.height;
-      const ly = Math.round(st.line * H);
-      ctx.imageSmoothingEnabled = true;
       ctx.clearRect(0, 0, W, H);
       ctx.drawImage(st.img, st.crop.sx, st.crop.sy, st.crop.sw, st.crop.sh, 0, 0, W, H);
 
-      // pink squares on the photo (below the line)
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(0, ly, W, H - ly);
-      ctx.clip();
-      for (const d of dots) {
-        const node = nodes.find((n) => n.c === d.c && n.r === d.r);
-        const k = node ? Math.max(0, 1 - (t - node.fireT) / 700) : 0;
-        fillCell(d.c, d.r, rgb(mix(accent, hot, k), 0.6 + 0.4 * k), 0.12);
-      }
-      ctx.restore();
-
-      if (ly <= 0) return;
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(0, 0, W, ly);
-      ctx.clip();
-
-      // base cubes
       for (let r = 0; r < ROWS; r++) {
-        if (cy(r) >= ly) break;
-        for (let c = 0; c < COLS; c++) fillCell(c, r, rgb(st.grid[r * COLS + c]));
+        for (let c = 0; c < COLS; c++) {
+          const k = coverAt(c, r);
+          if (k > 0.02) fillCell(c, r, rgb(st.grid[r * COLS + c]), 0, k);
+        }
       }
-      // twinkles: cube lightens and a small white spark appears in its middle
       for (const w of st.twinkles) {
-        const p = (t - w.t0) / w.dur;
-        const k = Math.sin(Math.PI * p);
-        fillCell(w.c, w.r, rgb(mix(st.grid[w.r * COLS + w.c], white, 0.55 * k)));
-        fillCell(w.c, w.r, rgb(white, 0.95 * k), 0.36);
+        const k = coverAt(w.c, w.r);
+        if (k < 0.5) continue;
+        const p = Math.sin(Math.PI * ((t - w.t0) / w.dur));
+        fillCell(w.c, w.r, rgb(mix(st.grid[w.r * COLS + w.c], white, 0.55 * p)), 0, k);
+        fillCell(w.c, w.r, rgb(white, 0.95 * p), 0.36, k);
       }
-      // signal trails, travelling one cube at a time
       for (const s of st.signals) {
         const step = Math.floor((t - s.t0) / 55);
         if (step < 0) continue;
-        for (let k = 0; k < 6; k++) {
-          const idx = step - k;
+        for (let j = 0; j < 6; j++) {
+          const idx = step - j;
           if (idx < 0 || idx >= s.path.length) continue;
           const p = s.path[idx];
+          const k = coverAt(p.c, p.r);
+          if (k < 0.5) continue;
           const base = st.grid[p.r * COLS + p.c];
-          const a = 1 - k / 6;
-          fillCell(p.c, p.r, rgb(mix(base, k === 0 ? white : accent, k === 0 ? 0.85 : 0.75 * a)));
+          const a = 1 - j / 6;
+          fillCell(p.c, p.r, rgb(mix(base, j === 0 ? white : accent, j === 0 ? 0.85 : 0.75 * a)), 0, k);
         }
       }
-      // neuron cubes: pink, flashing when they fire, with a ring that spreads
       for (const n of nodes) {
-        const dt = t - n.fireT;
-        const k = Math.max(0, 1 - dt / 600);
-        fillCell(n.c, n.r, rgb(mix(accent, hot, k)));
-        if (k > 0) {
-          fillCell(n.c, n.r, rgb(white, 0.9 * k), 0.3);
-          const grow = 1 + (1 - k) * 1.6;
+        const k = coverAt(n.c, n.r);
+        if (k < 0.02) continue;
+        const f = Math.max(0, 1 - (t - n.fireT) / 600);
+        fillCell(n.c, n.r, rgb(mix(accent, hot, f)), 0, k);
+        if (f > 0 && k > 0.5) {
+          fillCell(n.c, n.r, rgb(white, 0.9 * f), 0.3, k);
+          const grow = 1 + (1 - f) * 1.6;
           const w = (cx(n.c + 1) - cx(n.c)) * grow, h = (cy(n.r + 1) - cy(n.r)) * grow;
           const mx = (cx(n.c) + cx(n.c + 1)) / 2, my = (cy(n.r) + cy(n.r + 1)) / 2;
-          ctx.strokeStyle = rgb(hot, 0.7 * k);
+          ctx.strokeStyle = rgb(hot, 0.7 * f);
           ctx.lineWidth = Math.max(1, W / 240);
           ctx.strokeRect(mx - w / 2, my - h / 2, w, h);
         }
       }
-      ctx.restore();
     }
 
     function loop(t) {
       update(t);
       draw(t);
-      if (lineRef.current) lineRef.current.style.transform = `translateY(${st.line * frame.clientHeight}px)`;
       st.raf = requestAnimationFrame(loop);
     }
 
@@ -306,51 +373,48 @@ export default function PixelPortrait({ src, alt }) {
       const order = nodes
         .map((n, i) => ({ i, d: Math.abs(n.c - c) + Math.abs(n.r - r) }))
         .sort((a, b) => a.d - b.d);
-      const t = performance.now();
-      fire(order[0].i, t, 3);
-      if (order[1]) setTimeout(() => fire(order[1].i, performance.now(), 2), 150);
+      fire(order[0].i, performance.now(), 3);
     }
-    function redrawStatic() {
-      if (!reduce) return;
-      update(performance.now());
-      draw(performance.now());
-      if (lineRef.current) lineRef.current.style.transform = `translateY(${st.line * frame.clientHeight}px)`;
+    function after() {
+      if (reduce) { for (let i = 0; i < N; i++) st.cover[i] = st.target[i]; draw(performance.now()); }
     }
 
-    // The line only moves while you press and drag. It stays where you let go.
-    function onDown(e) {
-      if (e.button !== undefined && e.button !== 0) return;
-      st.dragging = true;
-      st.moved = false;
-      st.startY = e.clientY;
-      st.startX = e.clientX;
-      frame.setPointerCapture(e.pointerId);
-    }
+    // mouse: uncover while hovering. touch/pen: uncover while dragging.
     function onMove(e) {
-      if (!st.dragging) return;
-      if (!st.moved && Math.hypot(e.clientX - st.startX, e.clientY - st.startY) < 4) return;
-      st.moved = true;
-      st.target = frac(e).y;
-      e.preventDefault();
-      redrawStatic();
+      if (e.pointerType === "mouse" || st.down) {
+        if (st.down) st.moved = true;
+        eraseTo(frac(e));
+        after();
+      }
+    }
+    function onLeave(e) { if (e.pointerType === "mouse") st.last = null; }
+    function onDown(e) {
+      st.down = true;
+      st.moved = false;
+      if (e.pointerType !== "mouse") {
+        frame.setPointerCapture(e.pointerId);
+        st.last = null;
+        eraseTo(frac(e));
+        after();
+      }
     }
     function onUp(e) {
-      if (!st.dragging) return;
-      st.dragging = false;
-      if (!st.moved) burstAt(frac(e)); // a plain click makes the neurons fire
-      redrawStatic();
+      if (!st.down) return;
+      st.down = false;
+      if (e.pointerType !== "mouse") st.last = null;
+      else if (!st.moved) burstAt(frac(e));
     }
     function onKey(e) {
-      const step = e.shiftKey ? 0.2 : 0.05;
-      if (e.key === "ArrowDown") st.target = Math.min(1, st.target + step);
-      else if (e.key === "ArrowUp") st.target = Math.max(0, st.target - step);
-      else if (e.key === "Enter" || e.key === " ") burstAt({ x: 0.5, y: 0.4 });
-      else return;
+      // keyboard: Enter uncovers / covers the whole photo
+      if (e.key !== "Enter" && e.key !== " ") return;
       e.preventDefault();
-      redrawStatic();
+      const anyCovered = st.target.some((v) => v === 1);
+      if (anyCovered) { st.target.fill(0); st.backAt.fill(0); after(); }
+      else coverAll();
     }
 
     frame.addEventListener("pointermove", onMove);
+    frame.addEventListener("pointerleave", onLeave);
     frame.addEventListener("pointerdown", onDown);
     frame.addEventListener("pointerup", onUp);
     frame.addEventListener("pointercancel", onUp);
@@ -361,6 +425,7 @@ export default function PixelPortrait({ src, alt }) {
       cancelAnimationFrame(st.raf);
       ro.disconnect();
       frame.removeEventListener("pointermove", onMove);
+      frame.removeEventListener("pointerleave", onLeave);
       frame.removeEventListener("pointerdown", onDown);
       frame.removeEventListener("pointerup", onUp);
       frame.removeEventListener("pointercancel", onUp);
@@ -370,17 +435,28 @@ export default function PixelPortrait({ src, alt }) {
 
   return (
     <div className="portrait">
-      <div className="scanline" ref={lineRef} aria-hidden="true">
-        <span className="scanline-handle" />
-      </div>
       <div
         className="portrait-frame"
         ref={frameRef}
         tabIndex={0}
         role="img"
-        aria-label={`${alt}. Drag up or down to reveal the pixel version.`}
+        aria-label={`${alt}, hidden under pixels. Move over it to uncover; press Enter to uncover all.`}
       >
         <canvas ref={canvasRef} />
+      </div>
+      <div className="cover-wrap">
+        <button
+          type="button"
+          id="cover-me"
+          className={`cover-btn${peeked ? " is-peeked" : ""}`}
+          aria-label="Cover Me! Put the pixels back"
+          onClick={() => apiRef.current.coverAll?.()}
+          onMouseEnter={() => setTip(true)}
+          onMouseLeave={() => setTip(false)}
+          onFocus={() => setTip(true)}
+          onBlur={() => setTip(false)}
+        />
+        {tip && <span className="cover-tip" role="tooltip">Cover Me!</span>}
       </div>
     </div>
   );
