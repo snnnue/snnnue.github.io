@@ -44,7 +44,8 @@ export const theme = {
   layout: {
     sidebarWidth: 250,
     gap: 64,
-    maxWidth: 1440, // 사이트 전체 최대 너비
-    sidePadding: 48, // 화면 양옆 여백
+    maxWidth: 1320, // 사이트 전체 최대 너비
+    sidePadding: 72, // 화면 양옆 여백
+    topPadding: 52, // 화면 위쪽 여백
   },
 };

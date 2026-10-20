@@ -56,6 +56,7 @@ export const show = {
 export const navLabels = {
   about: "About",
   research: "Research",
+  interests: "Interests",
   projects: "Projects",
   cv: "CV",
 };
@@ -147,3 +148,58 @@ export const projects = [
     url: "",
   },
 ];
+
+// ─────────────────────────────────────────────────────────────
+//  INTERESTS 페이지 (메뉴에서 클릭하면 따로 열리는 화면)
+// ─────────────────────────────────────────────────────────────
+export const interests = {
+  // 맨 위 소개 (outside life)
+  outside: {
+    title: "Outside the Lab",
+    text: [
+      "Most of my time away from the bench goes to music. I listen across a wide range, from Korean hip-hop like **Sik-K** and **LNGSHOT** to **Drake**, and back to Korean folk, especially **Kim Min-ki**.",
+      "I also teach Korean at a community language school, and I like to travel when I can.",
+    ],
+    tags: ["Korean hip-hop", "Korean folk", "Teaching", "Travel"],
+  },
+
+  // 음악 매거진 경력
+  editorial: {
+    title: "Music Editorial",
+    label: "May 2023 – Present",
+    name: "Independent Music Publication, Seoul",
+    role: "Founding member · Editor & Designer",
+    points: [
+      "Served as editor-in-chief during the publication's first year.",
+      "Writes and edits album reviews, artist interviews, and curated features.",
+      "Grew the platform to **60K+ followers**, averaging **1M+ organic views** a month.",
+      "Works with labels and artists across Korea and the global music industry.",
+    ],
+  },
+
+  // 인생 앨범. image에 "images/albums/파일이름.jpg" 를 넣으면 커버가 보여요.
+  albumsTitle: "Albums",
+  albums: [
+    { title: "Album title", artist: "Artist", year: "Year", image: "" },
+    { title: "Album title", artist: "Artist", year: "Year", image: "" },
+    { title: "Album title", artist: "Artist", year: "Year", image: "" },
+    { title: "Album title", artist: "Artist", year: "Year", image: "" },
+    { title: "Album title", artist: "Artist", year: "Year", image: "" },
+    { title: "Album title", artist: "Artist", year: "Year", image: "" },
+    { title: "Album title", artist: "Artist", year: "Year", image: "" },
+    { title: "Album title", artist: "Artist", year: "Year", image: "" },
+    { title: "Album title", artist: "Artist", year: "Year", image: "" },
+    { title: "Album title", artist: "Artist", year: "Year", image: "" },
+  ],
+
+  // 영화. image에 "images/films/파일이름.jpg" 를 넣으면 포스터가 보여요.
+  filmsTitle: "Films",
+  films: [
+    { title: "Film title", director: "Director", year: "Year", image: "" },
+    { title: "Film title", director: "Director", year: "Year", image: "" },
+    { title: "Film title", director: "Director", year: "Year", image: "" },
+    { title: "Film title", director: "Director", year: "Year", image: "" },
+    { title: "Film title", director: "Director", year: "Year", image: "" },
+    { title: "Film title", director: "Director", year: "Year", image: "" },
+  ],
+};

@@ -18,6 +18,7 @@ export function applyTheme(theme) {
   root.style.setProperty("--gap", `${layout.gap}px`);
   root.style.setProperty("--max", `${layout.maxWidth}px`);
   root.style.setProperty("--pad", `${layout.sidePadding ?? 48}px`);
+  root.style.setProperty("--top", `${layout.topPadding ?? 40}px`);
 
   // Collect the weights each family needs, then load one stylesheet per family
   const need = {};

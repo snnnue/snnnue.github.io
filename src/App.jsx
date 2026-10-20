@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import PixelPortrait from "./PixelPortrait.jsx";
 import photo from "./assets/profile.jpg";
-import { profile, navLabels, news, research, projects, show, orgs } from "./content.js";
+import { profile, navLabels, news, research, projects, show, orgs, interests } from "./content.js";
 
 // ── small helpers ─────────────────────────────────────────────
 
@@ -60,22 +60,22 @@ function Icon({ name, size = 18 }) {
 }
 
 // Pastel pixel pattern used where an image hasn't been added yet
-function PixelPlaceholder({ seed }) {
+function PixelPlaceholder({ seed, cols = 24, rows = 14 }) {
   const cells = useMemo(() => {
     let s = 0;
     for (const ch of seed) s = (s * 31 + ch.charCodeAt(0)) >>> 0;
     const rand = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
     const colors = ["#f3eefc", "#e8dff9", "#dcd0f5", "#e1f0cc", "#cfe6ad", "#b8a6ec", "#f4a3c4"];
     const out = [];
-    for (let i = 0; i < 24 * 14; i++) {
+    for (let i = 0; i < cols * rows; i++) {
       const v = rand();
       out.push(v < 0.62 ? colors[0] : v < 0.8 ? colors[1] : v < 0.88 ? colors[2] : v < 0.93 ? colors[3] : v < 0.96 ? colors[4] : v < 0.99 ? colors[5] : colors[6]);
     }
     return out;
-  }, [seed]);
+  }, [seed, cols, rows]);
   return (
-    <svg className="placeholder" viewBox="0 0 24 14" preserveAspectRatio="none" aria-hidden="true">
-      {cells.map((c, i) => <rect key={i} x={i % 24} y={Math.floor(i / 24)} width="1.02" height="1.02" fill={c} />)}
+    <svg className="placeholder" viewBox={`0 0 ${cols} ${rows}`} preserveAspectRatio="none" aria-hidden="true">
+      {cells.map((c, i) => <rect key={i} x={i % cols} y={Math.floor(i / cols)} width="1.02" height="1.02" fill={c} />)}
     </svg>
   );
 }
@@ -98,6 +98,7 @@ function Monogram({ rows }) {
 function viewFromHash() {
   const h = (window.location.hash || "").replace("#", "");
   if (h === "projects" && show.projects) return h;
+  if (h === "interests") return h;
   return "home";
 }
 
@@ -263,6 +264,70 @@ function Projects() {
   );
 }
 
+function Shelf({ items, kind }) {
+  const poster = kind === "film";
+  return (
+    <ul className={`shelf ${poster ? "shelf-films" : "shelf-albums"}`}>
+      {items.map((it, i) => (
+        <li key={i} className="shelf-item">
+          <div className="shelf-cover">
+            {it.image ? (
+              <img src={it.image} alt={`${it.title} cover`} loading="lazy" />
+            ) : (
+              <PixelPlaceholder seed={`${kind}-${i}-${it.title}`} cols={poster ? 10 : 12} rows={poster ? 15 : 12} />
+            )}
+          </div>
+          <p className="shelf-title">{it.title}</p>
+          <p className="shelf-meta">{poster ? it.director : it.artist} · {it.year}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Interests() {
+  const { outside, editorial } = interests;
+  return (
+    <section className="section interests">
+      <h2 className="section-title">{navLabels.interests}</h2>
+
+      <div className="int-block">
+        <h3 className="res-group-title">{outside.title}</h3>
+        <div className="bio">
+          {outside.text.map((p, i) => <p key={i}><Rich text={p} /></p>)}
+        </div>
+        {outside.tags?.length > 0 && (
+          <ul className="tags">{outside.tags.map((t) => <li key={t}>{t}</li>)}</ul>
+        )}
+      </div>
+
+      <div className="int-block">
+        <h3 className="res-group-title">{editorial.title}</h3>
+        <div className="pub">
+          <p className="pub-label">{editorial.label}</p>
+          <div className="pub-body">
+            <h4 className="pub-title">{editorial.name}</h4>
+            <p className="pub-people">{editorial.role}</p>
+            <ul className="points">
+              {editorial.points.map((p, i) => <li key={i}><Rich text={p} /></li>)}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="int-block">
+        <h3 className="res-group-title">{interests.albumsTitle}</h3>
+        <Shelf items={interests.albums} kind="album" />
+      </div>
+
+      <div className="int-block">
+        <h3 className="res-group-title">{interests.filmsTitle}</h3>
+        <Shelf items={interests.films} kind="film" />
+      </div>
+    </section>
+  );
+}
+
 // ── page ──────────────────────────────────────────────────────
 
 export default function App() {
@@ -285,6 +350,7 @@ export default function App() {
     { id: "about", label: navLabels.about },
     { id: "research", label: navLabels.research },
     { id: "projects", label: navLabels.projects },
+    { id: "interests", label: navLabels.interests },
   ].filter((n) => n.id !== "projects" || show.projects);
 
   return (
@@ -323,6 +389,7 @@ export default function App() {
       <main className="main">
         {view === "home" && <Home />}
         {view === "projects" && <Projects />}
+        {view === "interests" && <Interests />}
       </main>
     </div>
   );
