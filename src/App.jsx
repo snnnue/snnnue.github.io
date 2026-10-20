@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import PixelPortrait from "./PixelPortrait.jsx";
+import AlbumCarousel from "./AlbumCarousel.jsx";
 import photo from "./assets/profile.jpg";
 import { profile, navLabels, news, research, projects, show, orgs, interests } from "./content.js";
 
@@ -315,7 +316,7 @@ function Interests() {
 
       <div className="int-block">
         <h3 className="res-group-title">{interests.albumsTitle}</h3>
-        <Shelf items={interests.albums} kind="album" />
+        <AlbumCarousel items={interests.albums} />
       </div>
 
       <div className="int-block">

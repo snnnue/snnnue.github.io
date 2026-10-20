@@ -388,14 +388,40 @@ a.card:hover .card-title { text-decoration: underline; text-underline-offset: 3p
   background: var(--c-accent);
 }
 .shelf { display: grid; gap: 40px 40px; }
-.shelf-albums {
-  /* fixed-size covers grouped in the middle instead of stretching across the row */
-  grid-template-columns: repeat(5, var(--album-size, 88px));
-  justify-content: center;
-  gap: 32px 36px;
+.shelf-albums { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+/* Album carousel: one looping row, biggest in the middle */
+.carousel { --cover: 168px; }
+.carousel-track {
+  position: relative;
+  height: var(--cover);
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  outline-offset: 6px;
+  /* soft white fade toward both ends */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 22%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 22%, #000 78%, transparent 100%);
 }
-.shelf-albums .shelf-title { font-size: 12px; margin-top: 8px; }
-.shelf-albums .shelf-meta { font-size: 11px; }
+.carousel-track:active { cursor: grabbing; }
+.carousel-item {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--cover);
+  height: var(--cover);
+  transform-origin: 50% 50%;
+  background: var(--c-panel);
+  will-change: transform, opacity, filter;
+}
+.carousel-item img, .carousel-empty { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+.carousel-caption { margin-top: 14px; text-align: center; min-height: 3em; }
+.carousel-caption .shelf-title { margin-top: 0; animation: caption-in 0.3s ease; }
+.carousel-caption .shelf-meta { animation: caption-in 0.3s ease; }
+@keyframes caption-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .carousel-caption .shelf-title, .carousel-caption .shelf-meta { animation: none; } }
 .shelf-films { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .shelf-item { min-width: 0; }
 .shelf-cover { aspect-ratio: 1 / 1; max-width: 100%; background: var(--c-panel); overflow: hidden; }
@@ -435,7 +461,7 @@ a.card:hover .card-title { text-decoration: underline; text-underline-offset: 3p
   .pub { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .cards { grid-template-columns: minmax(0, 1fr); }
   .shelf-films { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; }
-  .shelf-albums { grid-template-columns: repeat(3, var(--album-size, 88px)); gap: 26px 28px; justify-content: center; }
+  .carousel { --cover: 120px; }
   .news-row { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; }
   .news-row .news-date { grid-column: 1; }
   .news-row .news-text { grid-column: 1; }
