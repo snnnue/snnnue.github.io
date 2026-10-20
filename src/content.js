@@ -157,7 +157,7 @@ export const interests = {
   // OUTSIDE THE LAB: 위에 음악 매거진 경력, 아래에 짧은 글과 키워드
   outside: {
     title: "Outside the Lab",
-    text: ["I also teach Korean at a community language school, and I like to travel when I can."],
+    text: [], // 짧은 글을 넣고 싶으면 따옴표 안에 문장을 적으세요
     tags: ["Music", "Design", "Teaching", "Travel"],
   },
 
@@ -169,7 +169,7 @@ export const interests = {
     points: [
       "Served as editor-in-chief during the publication's first year.",
       "Grew the platform to **60K+ followers**, averaging about **1M organic views** a month.",
-      "Partner with labels and companies across the Korean and global music industry, like {{morevision}} and **POV**.",
+      "Work with labels and companies across the Korean and global music industry, like {{morevision}} and **POV**.",
       "Interview artists and write album reviews, features, and editorial columns.",
     ],
   },
