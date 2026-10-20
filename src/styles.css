@@ -338,6 +338,7 @@ a.card:hover .card-title { text-decoration: underline; text-underline-offset: 3p
 .int-block + .int-block { margin-top: 48px; }
 .int-block .res-group-title { margin-bottom: 14px; }
 .int-block .bio { margin-top: 0; }
+.int-block .outside-text { margin-top: 24px; }
 .int-block .pub { border-top: 1px dotted #c9cdd1; }
 .points { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; font-size: var(--size-small); }
 .points li { position: relative; padding-left: 14px; }

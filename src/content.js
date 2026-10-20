@@ -154,27 +154,23 @@ export const projects = [
 //  INTERESTS 페이지 (메뉴에서 클릭하면 따로 열리는 화면)
 // ─────────────────────────────────────────────────────────────
 export const interests = {
-  // 맨 위 소개 (outside life)
+  // OUTSIDE THE LAB: 위에 음악 매거진 경력, 아래에 짧은 글과 키워드
   outside: {
     title: "Outside the Lab",
-    text: [
-      "I am a founding member, editor, and designer at an independent music publication. Since 2023, we have grown it to **60K+ followers** and about **1M organic views** a month, working with labels and companies across the Korean and global music industry, like {{morevision}} and **POV**, on artist interviews, features, and editorial columns.",
-      "I also teach Korean at a community language school, and I like to travel when I can.",
-    ],
+    text: ["I also teach Korean at a community language school, and I like to travel when I can."],
     tags: ["Music", "Design", "Teaching", "Travel"],
   },
 
-  // 음악 매거진 경력
+  // 음악 매거진 경력 (Outside the Lab 맨 위에 나와요)
   editorial: {
-    title: "Music Editorial",
     label: "May 2023 – Present",
     name: "Independent Music Publication, Seoul",
     role: "Founding member · Editor & Designer",
     points: [
       "Served as editor-in-chief during the publication's first year.",
-      "Writes and edits album reviews, artist interviews, and curated features.",
-      "Grew the platform to **60K+ followers**, averaging **1M+ organic views** a month.",
-      "Works with labels and artists across Korea and the global music industry.",
+      "Grew the platform to **60K+ followers**, averaging about **1M organic views** a month.",
+      "Partner with labels and companies across the Korean and global music industry, like {{morevision}} and **POV**.",
+      "Interview artists and write album reviews, features, and editorial columns.",
     ],
   },
 

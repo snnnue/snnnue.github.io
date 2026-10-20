@@ -293,16 +293,6 @@ function Interests() {
 
       <div className="int-block">
         <h3 className="res-group-title">{outside.title}</h3>
-        <div className="bio">
-          {outside.text.map((p, i) => <p key={i}><Rich text={p} /></p>)}
-        </div>
-        {outside.tags?.length > 0 && (
-          <ul className="tags">{outside.tags.map((t) => <li key={t}>{t}</li>)}</ul>
-        )}
-      </div>
-
-      <div className="int-block">
-        <h3 className="res-group-title">{editorial.title}</h3>
         <div className="pub">
           <p className="pub-label">{editorial.label}</p>
           <div className="pub-body">
@@ -313,6 +303,14 @@ function Interests() {
             </ul>
           </div>
         </div>
+        {outside.text?.length > 0 && (
+          <div className="bio outside-text">
+            {outside.text.map((p, i) => <p key={i}><Rich text={p} /></p>)}
+          </div>
+        )}
+        {outside.tags?.length > 0 && (
+          <ul className="tags">{outside.tags.map((t) => <li key={t}>{t}</li>)}</ul>
+        )}
       </div>
 
       <div className="int-block">
