@@ -388,7 +388,14 @@ a.card:hover .card-title { text-decoration: underline; text-underline-offset: 3p
   background: var(--c-accent);
 }
 .shelf { display: grid; gap: 40px 40px; }
-.shelf-albums { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.shelf-albums {
+  /* fixed-size covers packed to the left instead of stretching across the row */
+  grid-template-columns: repeat(5, var(--album-size, 88px));
+  justify-content: start;
+  gap: 32px 36px;
+}
+.shelf-albums .shelf-title { font-size: 12px; margin-top: 8px; }
+.shelf-albums .shelf-meta { font-size: 11px; }
 .shelf-films { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .shelf-item { min-width: 0; }
 .shelf-cover { aspect-ratio: 1 / 1; max-width: 100%; background: var(--c-panel); overflow: hidden; }
@@ -427,7 +434,8 @@ a.card:hover .card-title { text-decoration: underline; text-underline-offset: 3p
   .hero-br { display: none; }
   .pub { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .cards { grid-template-columns: minmax(0, 1fr); }
-  .shelf-albums, .shelf-films { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; }
+  .shelf-films { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; }
+  .shelf-albums { grid-template-columns: repeat(3, var(--album-size, 88px)); gap: 26px 28px; }
   .news-row { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; }
   .news-row .news-date { grid-column: 1; }
   .news-row .news-text { grid-column: 1; }
