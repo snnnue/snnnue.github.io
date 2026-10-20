@@ -44,6 +44,7 @@ export const orgs = {
   kaist: { name: "KAIST", url: "https://bio.kaist.ac.kr", logo: "images/logos/kaist.png", logoHeight: 0.8 },
   jflab: { name: "Josselyn–Frankland Lab", url: "https://www.jflab.ca/", logo: "" },
   arc: { name: "ARC", url: "https://sop.utoronto.ca/group/association-for-research-in-clinical-science-arc/", logo: "images/logos/arc.png", logoHeight: 0.7 },
+  morevision: { name: "MORE VISION", url: "https://morevision.kr", logo: "images/logos/morevision.png", logoHeight: 0.85 },
   mbl: { name: "Memory Biology Lab", url: "https://sites.google.com/view/kaistmbl", logo: "" },
 };
 
@@ -157,10 +158,10 @@ export const interests = {
   outside: {
     title: "Outside the Lab",
     text: [
-      "Most of my time away from the bench goes to music. I listen across a wide range, from Korean hip-hop like **Sik-K** and **LNGSHOT** to **Drake**, and back to Korean folk, especially **Kim Min-ki**.",
+      "I am a founding member, editor, and designer at an independent music publication. Since 2023, we have grown it to **60K+ followers** and about **1M organic views** a month, working with labels and companies across the Korean and global music industry, like {{morevision}} and **POV**, on artist interviews, features, and editorial columns.",
       "I also teach Korean at a community language school, and I like to travel when I can.",
     ],
-    tags: ["Korean hip-hop", "Korean folk", "Teaching", "Travel"],
+    tags: ["Music", "Design", "Teaching", "Travel"],
   },
 
   // 음악 매거진 경력
@@ -178,7 +179,7 @@ export const interests = {
   },
 
   // 인생 앨범. image에 "images/albums/파일이름.jpg" 를 넣으면 커버가 보여요.
-  albumsTitle: "Albums",
+  albumsTitle: "Favourite Albums",
   albums: [
     { title: "Album title", artist: "Artist", year: "Year", image: "" },
     { title: "Album title", artist: "Artist", year: "Year", image: "" },
@@ -193,7 +194,7 @@ export const interests = {
   ],
 
   // 영화. image에 "images/films/파일이름.jpg" 를 넣으면 포스터가 보여요.
-  filmsTitle: "Films",
+  filmsTitle: "Favourite Films",
   films: [
     { title: "Film title", director: "Director", year: "Year", image: "" },
     { title: "Film title", director: "Director", year: "Year", image: "" },
