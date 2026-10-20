@@ -387,7 +387,7 @@ a.card:hover .card-title { text-decoration: underline; text-underline-offset: 3p
   height: 5px;
   background: var(--c-accent);
 }
-.shelf { display: grid; gap: 28px 20px; }
+.shelf { display: grid; gap: 40px 40px; }
 .shelf-albums { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .shelf-films { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .shelf-item { min-width: 0; }
@@ -427,7 +427,7 @@ a.card:hover .card-title { text-decoration: underline; text-underline-offset: 3p
   .hero-br { display: none; }
   .pub { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .cards { grid-template-columns: minmax(0, 1fr); }
-  .shelf-albums, .shelf-films { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 14px; }
+  .shelf-albums, .shelf-films { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; }
   .news-row { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; }
   .news-row .news-date { grid-column: 1; }
   .news-row .news-text { grid-column: 1; }
