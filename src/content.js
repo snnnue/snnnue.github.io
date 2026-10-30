@@ -84,7 +84,7 @@ export const research = [
       {
         label: "2026/27",
         title: "Characterizing the temporal dynamics of Npas4 expression in the lateral amygdala following fear memory encoding and retrieval",
-        meta: "UofT PSL498Y1 Project in Physiology",
+        meta: "*In Progress* · UofT PSL498Y1 Project in Physiology",
         links: [{ label: "Poster", url: "" }],
       },
     ],
@@ -196,6 +196,6 @@ export const interests = {
     { title: "Bleak Night", director: "Yoon Sung-hyun", year: "2011", image: "images/films/bleak-night.jpg" },
     { title: "Mommy", director: "Xavier Dolan", year: "2014", image: "images/films/mommy.jpg" },
     { title: "Phantom Thread", director: "Paul Thomas Anderson", year: "2017", image: "images/films/phantom-thread.jpg" },
-    { title: "Aftersun", director: "Charlotte Wells", year: "2022", image: "images/films/aftersun.jpg" },
+    { title: "You Can See Everything", director: "Nathan Fielder & Lance Oppenheim", year: "2026", image: "images/films/you-can-see-everything.jpg" },
   ],
 };

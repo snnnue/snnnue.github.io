@@ -21,9 +21,10 @@ function OrgLink({ org }) {
 
 // **bold**, [label](url) and {{org}} inside a sentence
 function Rich({ text }) {
-  const parts = text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\)|\{\{[a-zA-Z0-9_-]+\}\})/g);
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*|\[[^\]]+\]\([^)]+\)|\{\{[a-zA-Z0-9_-]+\}\})/g);
   return parts.map((p, i) => {
     if (p.startsWith("**")) return <strong key={i}>{p.slice(2, -2)}</strong>;
+    if (p.length > 2 && p.startsWith("*") && p.endsWith("*")) return <em key={i}>{p.slice(1, -1)}</em>;
     const org = p.match(/^\{\{([a-zA-Z0-9_-]+)\}\}$/);
     if (org && orgs[org[1]]) return <OrgLink key={i} org={orgs[org[1]]} />;
     const m = p.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
