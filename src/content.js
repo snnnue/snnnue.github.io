@@ -111,7 +111,7 @@ export const projects = [
     label: "Sheridan Datathon 2026 · 1st Place",
     slug: "readyation", // 이 이름으로 상세 페이지가 생겨요 (사이트주소/#readyation)
     title: "READYation: Built to Protect the People Who Explore for Us",
-    people: [{ name: "David Kang", me: true }, { name: "Taryn Chong" }, { name: "Aaron Jang" }, { name: "Hee-Won Jeong" }],
+    people: [{ name: "David Kang", me: true }, { name: "Aaron Jang" }, { name: "Taryn Chong" }, { name: "Hee-Won Jeong" }],
     text: "Forecasts solar radiation storms 24 hours ahead from NASA OMNI proton flux data and turns each forecast into a crew alert on an astronaut's helmet visor.",
     image: "images/readyation.jpg",
     links: [
