@@ -230,44 +230,42 @@ function Home() {
 }
 
 function Projects() {
-  const tags = useMemo(() => ["All", ...new Set(projects.map((p) => p.tag))], []);
-  const [filter, setFilter] = useState("All");
-  const shown = projects.filter((p) => filter === "All" || p.tag === filter);
   return (
     <section className="section">
       <h2 className="section-title">{navLabels.projects}</h2>
-      <div className="filters" role="tablist" aria-label="Filter projects">
-        {tags.map((t) => (
-          <button key={t} id={`filter-${t}`} type="button" role="tab" aria-selected={filter === t} className={filter === t ? "is-active" : ""} onClick={() => setFilter(t)}>
-            {t}
-          </button>
-        ))}
-      </div>
-      <ul className="cards">
-        {shown.map((p) => {
+      <ul className="projs">
+        {projects.map((p) => {
           const links = (p.links || []).filter((l) => l.url);
           return (
-            <li key={p.title} className="card">
-              <div className="card-head">
-                <h3 className="card-title">{p.title}</h3>
-                <span className="card-tag"># {p.tag}</span>
-                <span className="card-year">{p.year}</span>
-              </div>
-              <div className="card-media">
+            <li key={p.title} className="proj">
+              <div className="proj-media">
                 {p.image ? <img src={p.image} alt={`${p.title} screenshot`} loading="lazy" /> : <PixelPlaceholder seed={p.title} />}
               </div>
-              {p.award && <p className="card-award">🏆 {p.award}</p>}
-              {p.meta && <p className="card-meta"><Rich text={p.meta} /></p>}
-              <p className="card-text">{p.text}</p>
-              {links.length > 0 && (
-                <p className="pub-links">
-                  {links.map((l) => (
-                    <a key={l.label} href={l.url} target="_blank" rel="noreferrer">
-                      <Icon name={l.label.toLowerCase()} /> {l.label}
-                    </a>
-                  ))}
-                </p>
-              )}
+              <div className="proj-body">
+                <p className="pub-label proj-label">{p.label}</p>
+                <h3 className="proj-title">{p.title}</h3>
+                {p.people?.length > 0 && (
+                  <p className="proj-people">
+                    {p.people.map((x, j) => (
+                      <React.Fragment key={j}>
+                        {x.me ? <strong>{x.name}</strong> : <span>{x.name}</span>}
+                        {j < p.people.length - 1 ? ", " : ""}
+                      </React.Fragment>
+                    ))}
+                  </p>
+                )}
+                {p.meta && <p className="proj-meta"><Rich text={p.meta} /></p>}
+                {p.text && <p className="proj-text"><Rich text={p.text} /></p>}
+                {links.length > 0 && (
+                  <p className="pub-links">
+                    {links.map((l) => (
+                      <a key={l.label} href={l.url} target="_blank" rel="noreferrer">
+                        <Icon name={l.label.toLowerCase()} /> {l.label}
+                      </a>
+                    ))}
+                  </p>
+                )}
+              </div>
             </li>
           );
         })}

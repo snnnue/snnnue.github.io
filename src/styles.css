@@ -374,6 +374,35 @@ button { font: inherit; color: inherit; }
 .card-media img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: auto; }
 a.card:hover .card-title { text-decoration: underline; text-underline-offset: 3px; }
 
+/* Projects page: publication-style list, image left */
+.proj {
+  display: grid;
+  grid-template-columns: minmax(0, 0.38fr) minmax(0, 0.62fr);
+  gap: 36px;
+  align-items: start;
+  padding-block: 28px;
+  border-bottom: 1px dotted #c9cdd1;
+}
+.proj:first-child { padding-top: 8px; }
+.proj-media { aspect-ratio: 16 / 9; max-width: 100%; overflow: hidden; background: var(--c-panel); }
+.proj-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.proj-body { min-width: 0; }
+.proj-label { text-transform: uppercase; letter-spacing: 0.08em; font-size: var(--size-itemLabel); font-weight: var(--w-label); }
+.proj-title {
+  margin-top: 8px;
+  font-family: var(--font-heading);
+  font-weight: var(--w-heading);
+  font-size: calc(var(--size-itemTitle) * 1.12);
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--c-text);
+  text-wrap: balance;
+}
+.proj-people { margin-top: 8px; font-size: var(--size-small); color: var(--c-muted); }
+.proj-people strong { color: var(--c-text); }
+.proj-meta { margin-top: 2px; font-size: var(--size-small); color: var(--c-muted); }
+.proj-text { margin-top: 8px; font-size: var(--size-small); line-height: 1.55; max-width: 60ch; }
+
 /* Interests page */
 .int-block + .int-block { margin-top: 48px; }
 .int-block .res-group-title { margin-bottom: 14px; }
@@ -464,6 +493,7 @@ a.card:hover .card-title { text-decoration: underline; text-underline-offset: 3p
   .hero-br { display: none; }
   .pub { grid-template-columns: minmax(0, 1fr); gap: 4px; }
   .cards { grid-template-columns: minmax(0, 1fr); }
+  .proj { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .shelf-films { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 24px; }
   .carousel { --cover: 120px; }
   .news-row { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; }

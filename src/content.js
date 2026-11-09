@@ -105,15 +105,14 @@ export const research = [
 ];
 
 // 프로젝트 카드. tag 이름으로 위쪽 필터 버튼이 자동으로 만들어져요.
+// 프로젝트 (논문 목록 형식). people에서 me: true인 이름이 굵게 표시돼요.
 export const projects = [
   {
-    title: "READYation",
-    tag: "Datathon",
-    year: 2026,
-    award: "1st Place · Sheridan Datathon 2026",
-    meta: "Team of 4 · Python, IBM Granite TinyTimeMixer",
+    label: "Sheridan Datathon 2026 · 1st Place 🏆",
+    title: "READYation: Built to Protect the People Who Explore for Us",
+    people: [{ name: "Taryn Chong" }, { name: "Aaron Jang" }, { name: "David Kang", me: true }, { name: "Hee-Won Jeong" }],
+    text: "Forecasts solar radiation storms 24 hours ahead from NASA OMNI proton flux data and turns each forecast into a crew alert on an astronaut's helmet visor.",
     image: "images/readyation.jpg",
-    text: "Forecasts solar radiation storms 24 hours ahead from NASA OMNI proton flux data and turns each forecast into a crew alert, shown on an astronaut's helmet visor. On 2014 to 2020 test data it warned ahead of all 14 storms.",
     links: [
       { label: "Devpost", url: "https://devpost.com/software/nasa-omni-forecast-to-predict-power-outages" },
       { label: "Mission console", url: "https://snnnue.github.io/readyation/console" },
@@ -122,12 +121,11 @@ export const projects = [
     ],
   },
   {
-    title: "Npas4 in the Lateral Amygdala",
-    tag: "Research",
-    year: 2026,
-    meta: "*In Progress* · UofT PSL498Y1 Project in Physiology",
+    label: "PSL498Y1 · In Progress",
+    title: "Characterizing the Temporal Dynamics of Npas4 Expression in the Lateral Amygdala Following Fear Memory Encoding and Retrieval",
+    people: [{ name: "David Kang", me: true }],
+    meta: "UofT PSL498Y1 Project in Physiology · Josselyn–Frankland Lab",
     image: "",
-    text: "Characterizing the temporal dynamics of Npas4 expression in the lateral amygdala following fear memory encoding and retrieval.",
     links: [{ label: "Poster", url: "" }],
   },
 ];
