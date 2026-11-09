@@ -109,6 +109,7 @@ export const research = [
 export const projects = [
   {
     label: "Sheridan Datathon 2026 · 1st Place",
+    slug: "readyation", // 이 이름으로 상세 페이지가 생겨요 (사이트주소/#readyation)
     title: "READYation: Built to Protect the People Who Explore for Us",
     people: [{ name: "David Kang", me: true }, { name: "Taryn Chong" }, { name: "Aaron Jang" }, { name: "Hee-Won Jeong" }],
     text: "Forecasts solar radiation storms 24 hours ahead from NASA OMNI proton flux data and turns each forecast into a crew alert on an astronaut's helmet visor.",
@@ -119,6 +120,83 @@ export const projects = [
       { label: "Helmet demo", url: "https://snnnue.github.io/readyation/" },
       { label: "Code", url: "https://github.com/AaronJang22/Sheridan-Datathon-2026" },
     ],
+    // 상세 페이지 내용. 각 섹션의 text는 문단 목록, points는 불렛 목록이에요.
+    details: {
+      video: "7mICMH5P8jM", // YouTube 영상 ID
+      tagline: "Solar radiation hits astronauts before the geomagnetic storm alert does. READYation forecasts these radiation storms from NASA data and puts the warning on the helmet visor.",
+      images: [{ src: "images/readyation-console.jpg", caption: "Mission console replaying the September 2017 storm" }],
+      stats: [
+        { value: "14 / 14", label: "storms warned in advance (2014 to 2020 test data)" },
+        { value: "3.8 h", label: "median warning time, vs 2.2 h from flux alone" },
+        { value: "1.7M", label: "five-minute NASA OMNI records analyzed" },
+      ],
+      sections: [
+        {
+          title: "Inspiration",
+          text: [
+            "We started with questions about how space weather affects health on Earth and found no measurable effect. That pointed us to the people who actually face the risk. Astronauts work beyond Earth's magnetic field, and solar proton storms can reach them within hours, often with no geomagnetic alert at all.",
+          ],
+        },
+        {
+          title: "What it does",
+          text: [
+            "READYation reads recent proton flux, forecasts it 24 hours ahead, and raises tiered crew alerts. A mission console replays real storms from 2014 to 2020, and a 3D helmet shows how each alert would appear on the visor.",
+          ],
+          points: [
+            "**Yellow WATCH** when a storm is likely within hours",
+            "**Orange STORM** at NOAA S1 (10 pfu)",
+            "**Red DANGER** at NOAA S3 (1,000 pfu), end EVA and shelter",
+          ],
+        },
+        {
+          title: "How we built it",
+          points: [
+            "About 1.7 million five-minute NASA OMNI records, analyzed in Python with pandas, NumPy and SciPy",
+            "IBM Granite TinyTimeMixer r2, fine-tuned on 2010 to 2013 and tested on 2014 to 2020",
+            "Helmet visualization built with three.js and hosted on GitHub Pages",
+          ],
+        },
+        {
+          title: "Results",
+          text: [
+            "On the 2014 to 2020 test period, READYation warned ahead of all 14 radiation storms, with a median lead time of 3.8 hours compared with 2.2 hours from flux alone. It also raised 22 watches that did not become storms.",
+          ],
+        },
+        {
+          title: "Challenges",
+          points: [
+            "A steep learning curve, since most of us were new to data science",
+            "Null results from our first health ideas",
+            "An early analysis error with missing data, which we fixed so gaps show as NO DATA instead of safe",
+            "Strong storms are rare, so we focused on honest testing and reporting uncertainty",
+          ],
+        },
+        {
+          title: "What we learned",
+          points: [
+            "Near-zero correlation does not rule out a link, because timing matters",
+            "Missing data is not safe data",
+            "Models have to be tested on future data",
+            "Null results can lead to better questions",
+          ],
+        },
+        {
+          title: "What's next",
+          points: [
+            "Add recent solar cycle data, including the 2024 superstorm",
+            "Study higher-energy protons and estimate biological dose",
+            "Connect to live NOAA data",
+          ],
+        },
+        {
+          title: "Limits",
+          text: [
+            "The test set is small, 10 MeV flux is not a radiation dose, and the protons in the helmet demo are illustrative. This is a datathon project, not an operational tool.",
+          ],
+        },
+      ],
+      builtWith: ["Python", "IBM Granite", "Colab", "Claude", "Gemini", "three.js"],
+    },
   },
   {
     label: "PSL498Y1 · In Progress",

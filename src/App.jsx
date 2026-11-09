@@ -102,6 +102,7 @@ function viewFromHash() {
   const h = (window.location.hash || "").replace("#", "");
   if (h === "projects" && show.projects) return h;
   if (h === "interests") return h;
+  if (show.projects && projects.some((p) => p.slug === h && p.details)) return "project:" + h;
   return "home";
 }
 
@@ -238,12 +239,19 @@ function Projects() {
           const links = (p.links || []).filter((l) => l.url);
           return (
             <li key={p.title} className="proj">
-              <div className="proj-media">
-                {p.image ? <img src={p.image} alt={`${p.title} screenshot`} loading="lazy" /> : <PixelPlaceholder seed={p.title} />}
-              </div>
+              {(() => {
+                const media = p.image ? <img src={p.image} alt={`${p.title} screenshot`} loading="lazy" /> : <PixelPlaceholder seed={p.title} />;
+                return p.details ? (
+                  <a className="proj-media is-link" href={`#${p.slug}`} aria-label={`Read more about ${p.title}`}>{media}</a>
+                ) : (
+                  <div className="proj-media">{media}</div>
+                );
+              })()}
               <div className="proj-body">
                 <p className="pub-label proj-label">{p.label}</p>
-                <h3 className="proj-title">{p.title}</h3>
+                <h3 className="proj-title">
+                  {p.details ? <a href={`#${p.slug}`}>{p.title}</a> : p.title}
+                </h3>
                 {p.people?.length > 0 && (
                   <p className="proj-people">
                     {p.people.map((x, j) => (
@@ -256,8 +264,11 @@ function Projects() {
                 )}
                 {p.meta && <p className="proj-meta"><Rich text={p.meta} /></p>}
                 {p.text && <p className="proj-text"><Rich text={p.text} /></p>}
-                {links.length > 0 && (
+                {(links.length > 0 || p.details) && (
                   <p className="pub-links">
+                    {p.details && (
+                      <a href={`#${p.slug}`} className="more-link">Read more →</a>
+                    )}
                     {links.map((l) => (
                       <a key={l.label} href={l.url} target="_blank" rel="noreferrer">
                         <Icon name={l.label.toLowerCase()} /> {l.label}
@@ -271,6 +282,93 @@ function Projects() {
         })}
       </ul>
     </section>
+  );
+}
+
+function ProjectDetail({ slug }) {
+  const p = projects.find((x) => x.slug === slug);
+  if (!p) return null;
+  const d = p.details;
+  const links = (p.links || []).filter((l) => l.url);
+  return (
+    <article className="section detail">
+      <a className="back-link" href="#projects">← {navLabels.projects}</a>
+      <p className="pub-label proj-label">{p.label}</p>
+      <h1 className="detail-title">{p.title}</h1>
+      {p.people?.length > 0 && (
+        <p className="proj-people">
+          {p.people.map((x, j) => (
+            <React.Fragment key={j}>
+              {x.me ? <strong>{x.name}</strong> : <span>{x.name}</span>}
+              {j < p.people.length - 1 ? ", " : ""}
+            </React.Fragment>
+          ))}
+        </p>
+      )}
+      {d.tagline && <p className="detail-tagline">{d.tagline}</p>}
+      {links.length > 0 && (
+        <p className="pub-links">
+          {links.map((l) => (
+            <a key={l.label} href={l.url} target="_blank" rel="noreferrer">
+              <Icon name={l.label.toLowerCase()} /> {l.label}
+            </a>
+          ))}
+        </p>
+      )}
+
+      {d.video ? (
+        <div className="detail-video">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${d.video}`}
+            title={`${p.title} demo video`}
+            allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+            allowFullScreen
+            loading="lazy"
+          />
+        </div>
+      ) : p.image ? (
+        <img className="detail-hero" src={p.image} alt="" />
+      ) : null}
+
+      {d.stats?.length > 0 && (
+        <ul className="detail-stats">
+          {d.stats.map((st) => (
+            <li key={st.value}>
+              <span className="stat-value">{st.value}</span>
+              <span className="stat-label">{st.label}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {d.sections.map((sec, i) => (
+        <section key={sec.title} className="detail-section">
+          <h2 className="res-group-title">{sec.title}</h2>
+          {(sec.text || []).map((t, j) => <p key={j}><Rich text={t} /></p>)}
+          {sec.points?.length > 0 && (
+            <ul className="points">{sec.points.map((t, j) => <li key={j}><Rich text={t} /></li>)}</ul>
+          )}
+          {i === 1 && p.image && d.video && (
+            <figure className="detail-figure">
+              <img src={p.image} alt={`${p.title} helmet visor alert`} loading="lazy" />
+            </figure>
+          )}
+          {i === 2 && (d.images || []).map((im) => (
+            <figure key={im.src} className="detail-figure">
+              <img src={im.src} alt={im.caption || ""} loading="lazy" />
+              {im.caption && <figcaption>{im.caption}</figcaption>}
+            </figure>
+          ))}
+        </section>
+      ))}
+
+      {d.builtWith?.length > 0 && (
+        <section className="detail-section">
+          <h2 className="res-group-title">Built with</h2>
+          <ul className="tags">{d.builtWith.map((t) => <li key={t}>{t}</li>)}</ul>
+        </section>
+      )}
+    </article>
   );
 }
 
@@ -341,7 +439,7 @@ function Interests() {
 export default function App() {
   const { view, hash } = useRoute();
   const spy = useScrollSpy(["about", "research"], view === "home");
-  const active = view === "home" ? spy : view;
+  const active = view === "home" ? spy : view.startsWith("project:") ? "projects" : view;
   const first = useRef(true);
 
   // scroll to the right place when the page changes
@@ -393,6 +491,7 @@ export default function App() {
       <main className="main">
         {view === "home" && <Home />}
         {view === "projects" && <Projects />}
+        {view.startsWith("project:") && <ProjectDetail slug={view.slice(8)} />}
         {view === "interests" && <Interests />}
       </main>
     </div>
