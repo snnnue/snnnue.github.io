@@ -44,6 +44,7 @@ const ICONS = {
   poster: "M5 3h14v18H5z M8 7h8 M8 11h8 M8 15h5",
   slides: "M3 4h18v12H3z M12 16v4 M8 20h8",
   code: "M8 8l-4 4 4 4 M16 8l4 4-4 4",
+  devpost: "M7 4h6a8 8 0 0 1 0 16H7z",
   archive: "M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1 M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1",
   linkedin: "M4 4h16v16H4z M8 10v6 M8 7.5v.01 M12 16v-3.5a2 2 0 0 1 4 0V16 M12 10v6",
   github: "M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21",
@@ -147,7 +148,7 @@ function News() {
     <div className={`news ${open ? "is-open" : ""}`}>
       <button type="button" id="news-toggle" className="news-row news-head" aria-expanded={open} onClick={() => setOpen(!open)} disabled={!rest.length}>
         <span className="news-date">{first.date}</span>
-        <span className="news-text">{first.text}</span>
+        <span className="news-text"><Rich text={first.text} /></span>
         {rest.length > 0 && <span className="news-chevron" aria-hidden="true" />}
       </button>
       {open && (
@@ -155,7 +156,7 @@ function News() {
           {rest.map((n, i) => (
             <li key={i} className="news-row">
               <span className="news-date">{n.date}</span>
-              <span className="news-text">{n.text}</span>
+              <span className="news-text"><Rich text={n.text} /></span>
             </li>
           ))}
         </ul>
@@ -244,20 +245,29 @@ function Projects() {
       </div>
       <ul className="cards">
         {shown.map((p) => {
-          const Wrap = p.url ? "a" : "div";
+          const links = (p.links || []).filter((l) => l.url);
           return (
-            <li key={p.title}>
-              <Wrap className="card" {...(p.url ? { href: p.url, target: "_blank", rel: "noreferrer" } : {})}>
-                <div className="card-head">
-                  <h3 className="card-title">{p.title}</h3>
-                  <span className="card-tag"># {p.tag}</span>
-                  <span className="card-year">{p.year}</span>
-                </div>
-                <div className="card-media">
-                  {p.image ? <img src={p.image} alt="" loading="lazy" /> : <PixelPlaceholder seed={p.title} />}
-                </div>
-                <p className="card-text">{p.text}</p>
-              </Wrap>
+            <li key={p.title} className="card">
+              <div className="card-head">
+                <h3 className="card-title">{p.title}</h3>
+                <span className="card-tag"># {p.tag}</span>
+                <span className="card-year">{p.year}</span>
+              </div>
+              <div className="card-media">
+                {p.image ? <img src={p.image} alt={`${p.title} screenshot`} loading="lazy" /> : <PixelPlaceholder seed={p.title} />}
+              </div>
+              {p.award && <p className="card-award">🏆 {p.award}</p>}
+              {p.meta && <p className="card-meta"><Rich text={p.meta} /></p>}
+              <p className="card-text">{p.text}</p>
+              {links.length > 0 && (
+                <p className="pub-links">
+                  {links.map((l) => (
+                    <a key={l.label} href={l.url} target="_blank" rel="noreferrer">
+                      <Icon name={l.label.toLowerCase()} /> {l.label}
+                    </a>
+                  ))}
+                </p>
+              )}
             </li>
           );
         })}

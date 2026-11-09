@@ -50,7 +50,7 @@ export const orgs = {
 
 // 섹션 켜기/끄기. true로 바꾸면 메뉴와 페이지가 다시 생겨요.
 export const show = {
-  projects: false,
+  projects: true,
 };
 
 // 메뉴 이름. 바꾸고 싶으면 글자만 수정하세요.
@@ -64,6 +64,7 @@ export const navLabels = {
 
 // 최신 소식. 맨 위가 가장 최근. 첫 줄만 보이고, 누르면 전체가 펼쳐져요.
 export const news = [
+  { date: "Nov 2026", text: "Won **1st Place** at Sheridan Datathon 2026 with [READYation](https://devpost.com/software/nasa-omni-forecast-to-predict-power-outages) 🏆" },
   { date: "Oct 2026", text: "Leading ARC's first neuroscience journal club series 🧠" },
   { date: "Sep 2026", text: "Started my PSL498Y research project in the Josselyn–Frankland Lab 🔬" },
   { date: "Sep 2026", text: "Held the first general meeting of ARC, the club I founded at UofT 🎉" },
@@ -78,17 +79,6 @@ export const news = [
 // label: 왼쪽 작은 글씨 (기간 등) / title: 제목 / meta: 회색 한 줄 / text: 설명
 // links: label은 "Poster", "Slides", "Paper", "Webpage", "Code" 등. url이 비어 있으면 안 보여요.
 export const research = [
-  {
-    group: "Projects & Presentations",
-    items: [
-      {
-        label: "2026/27",
-        title: "Characterizing the temporal dynamics of Npas4 expression in the lateral amygdala following fear memory encoding and retrieval",
-        meta: "*In Progress* · UofT PSL498Y1 Project in Physiology",
-        links: [{ label: "Poster", url: "" }],
-      },
-    ],
-  },
   {
     group: "Research Experience",
     items: [
@@ -117,36 +107,28 @@ export const research = [
 // 프로젝트 카드. tag 이름으로 위쪽 필터 버튼이 자동으로 만들어져요.
 export const projects = [
   {
-    title: "Npas4 Poster",
+    title: "READYation",
+    tag: "Datathon",
+    year: 2026,
+    award: "1st Place · Sheridan Datathon 2026",
+    meta: "Team of 4 · Python, IBM Granite TinyTimeMixer",
+    image: "images/readyation.jpg",
+    text: "Forecasts solar radiation storms 24 hours ahead from NASA OMNI proton flux data and turns each forecast into a crew alert, shown on an astronaut's helmet visor. On 2014 to 2020 test data it warned ahead of all 14 storms.",
+    links: [
+      { label: "Devpost", url: "https://devpost.com/software/nasa-omni-forecast-to-predict-power-outages" },
+      { label: "Mission console", url: "https://snnnue.github.io/readyation/console" },
+      { label: "Helmet demo", url: "https://snnnue.github.io/readyation/" },
+      { label: "Code", url: "https://github.com/AaronJang22/Sheridan-Datathon-2026" },
+    ],
+  },
+  {
+    title: "Npas4 in the Lateral Amygdala",
     tag: "Research",
     year: 2026,
+    meta: "*In Progress* · UofT PSL498Y1 Project in Physiology",
     image: "",
-    text: "Temporal dynamics of Npas4 expression in the lateral amygdala after fear memory encoding and retrieval. PSL498Y1 project.",
-    url: "",
-  },
-  {
-    title: "Independent Music Publication",
-    tag: "Editorial",
-    year: 2023,
-    image: "",
-    text: "Founding member, editor and designer. Grew an online music editorial platform to 60K+ followers and 1M+ organic views a month.",
-    url: "",
-  },
-  {
-    title: "ARC",
-    tag: "Leadership",
-    year: 2026,
-    image: "",
-    text: "Founded the Association for Research in Clinical Science, an academic club at UofT running journal clubs and seminars.",
-    url: "",
-  },
-  {
-    title: "Korean Language School",
-    tag: "Teaching",
-    year: 2023,
-    image: "",
-    text: "Volunteer Korean language teacher at a local community school since 2023.",
-    url: "",
+    text: "Characterizing the temporal dynamics of Npas4 expression in the lateral amygdala following fear memory encoding and retrieval.",
+    links: [{ label: "Poster", url: "" }],
   },
 ];
 
