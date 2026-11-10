@@ -113,6 +113,7 @@ export const projects = [
     title: "READYation: Built to Protect the People Who Explore for Us",
     people: [{ name: "David Kang", me: true }, { name: "Aaron Jang" }, { name: "Taryn Chong" }, { name: "Hee-Won Jeong" }],
     text: "Forecasts solar radiation storms 24 hours ahead from NASA OMNI proton flux data and turns each forecast into a crew alert on an astronaut's helmet visor.",
+    role: "Data preprocessing and validation, 3D helmet visualization, alert scale design", // 목록에 보이는 한 줄 역할
     image: "images/readyation.jpg",
     links: [
       { label: "Devpost", url: "https://devpost.com/software/nasa-omni-forecast-to-predict-power-outages" },
@@ -123,6 +124,14 @@ export const projects = [
     // 상세 페이지 내용. 각 섹션의 text는 문단 목록, points는 불렛 목록이에요.
     details: {
       video: "7mICMH5P8jM", // YouTube 영상 ID
+      // 내 역할 (상세 페이지 위쪽 박스에 나와요)
+      role: [
+        "Built the data foundation by cleaning and preprocessing about 1.7 million five-minute NASA OMNI records, pruning irrelevant variables and restructuring the data for forecasting",
+        "Audited and validated the final dataset so the model trained and was tested on accurate, complete inputs",
+        "Designed and built the interactive 3D helmet visualization in three.js that turns READYation forecasts into tiered visor alerts for astronauts",
+        "Helped calibrate the alert scale connecting the forecast model to the interface",
+        "Authored the project write-up and Devpost submission presented to the judges",
+      ],
       tagline: "Solar radiation hits astronauts before the geomagnetic storm alert does. READYation forecasts these radiation storms from NASA data and puts the warning on the helmet visor.",
       images: [{ src: "images/readyation-console.jpg", caption: "Mission console replaying the September 2017 storm" }],
       stats: [

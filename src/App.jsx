@@ -264,6 +264,9 @@ function Projects() {
                 )}
                 {p.meta && <p className="proj-meta"><Rich text={p.meta} /></p>}
                 {p.text && <p className="proj-text"><Rich text={p.text} /></p>}
+                {p.role && (
+                  <p className="proj-role"><span className="proj-role-label">My role</span>{p.role}</p>
+                )}
                 {(links.length > 0 || p.details) && (
                   <p className="pub-links">
                     {p.details && (
@@ -314,6 +317,13 @@ function ProjectDetail({ slug }) {
             </a>
           ))}
         </p>
+      )}
+
+      {d.role?.length > 0 && (
+        <section className="my-role" aria-labelledby="my-role-title">
+          <h2 id="my-role-title" className="my-role-title">My role</h2>
+          <ul className="points">{d.role.map((t, j) => <li key={j}><Rich text={t} /></li>)}</ul>
+        </section>
       )}
 
       {d.video ? (

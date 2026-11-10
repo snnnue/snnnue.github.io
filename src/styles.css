@@ -409,6 +409,39 @@ a.proj-media.is-link:hover { opacity: 0.85; }
 .proj-title a:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
 .pub-links .more-link { color: var(--c-text); font-weight: var(--w-bold); }
 
+/* "My role" line in the project list and box on the detail page */
+.proj-role { margin-top: 10px; font-size: var(--size-small); color: var(--c-text); line-height: 1.5; }
+.proj-role-label {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 1px 7px;
+  font-family: var(--font-label);
+  font-size: 10.5px;
+  font-weight: var(--w-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-text);
+  background: var(--c-accent);
+  border-radius: 3px;
+  vertical-align: 1px;
+}
+.my-role {
+  margin-top: 28px;
+  padding: 20px 24px 22px;
+  background: var(--c-panel);
+  border-left: 3px solid var(--c-accent);
+}
+.my-role-title {
+  font-family: var(--font-label);
+  font-weight: var(--w-heading);
+  font-size: var(--size-itemLabel);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-text);
+  margin-bottom: 10px;
+}
+.my-role .points { font-size: var(--size-body); gap: 8px; margin-top: 0; }
+
 /* Project detail page */
 .detail { max-width: 46rem; }
 .back-link { display: inline-block; margin-bottom: 24px; font-size: var(--size-small); color: var(--c-muted); text-decoration: none; }
