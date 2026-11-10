@@ -128,7 +128,7 @@ export const projects = [
       role: [
         "Built the data foundation by cleaning and preprocessing about 1.7 million five-minute NASA OMNI records, pruning irrelevant variables and restructuring the data for forecasting",
         "Audited and validated the final dataset so the model trained and was tested on accurate, complete inputs",
-        "Designed and built the interactive 3D helmet visualization in three.js that turns READYation forecasts into tiered visor alerts for astronauts",
+        "Designed and built the interactive 3D helmet visualization that turns READYation forecasts into tiered visor alerts for astronauts",
         "Helped calibrate the alert scale connecting the forecast model to the interface",
         "Authored the project write-up and Devpost submission presented to the judges",
       ],
