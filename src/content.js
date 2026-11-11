@@ -51,6 +51,7 @@ export const orgs = {
 // 섹션 켜기/끄기. true로 바꾸면 메뉴와 페이지가 다시 생겨요.
 export const show = {
   projects: true,
+  interests: false, // true로 바꾸면 Interests 메뉴와 페이지가 그대로 다시 나와요
 };
 
 // 메뉴 이름. 바꾸고 싶으면 글자만 수정하세요.

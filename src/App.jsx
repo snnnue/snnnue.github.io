@@ -101,7 +101,7 @@ function Monogram({ rows }) {
 function viewFromHash() {
   const h = (window.location.hash || "").replace("#", "");
   if (h === "projects" && show.projects) return h;
-  if (h === "interests") return h;
+  if (h === "interests" && show.interests) return h;
   if (show.projects && projects.some((p) => p.slug === h && p.details)) return "project:" + h;
   return "home";
 }
@@ -467,7 +467,7 @@ export default function App() {
     { id: "research", label: navLabels.research },
     { id: "projects", label: navLabels.projects },
     { id: "interests", label: navLabels.interests },
-  ].filter((n) => n.id !== "projects" || show.projects);
+  ].filter((n) => (n.id !== "projects" || show.projects) && (n.id !== "interests" || show.interests));
 
   return (
     <div className="page">
